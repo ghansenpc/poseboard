@@ -19,6 +19,7 @@ export default function Home() {
           margin: "0 auto",
         }}
       >
+        {/* top pill bar */}
         <div
           style={{
             display: "inline-block",
@@ -32,7 +33,7 @@ export default function Home() {
             marginBottom: "1.5rem",
           }}
         >
-          PoseSuite • For Wedding Photographers
+          POSESUITE by GARBERO PHOTOGRAPHY
         </div>
 
         <h1
@@ -44,9 +45,7 @@ export default function Home() {
             marginBottom: "1.25rem",
           }}
         >
-          Plan, organize, schedule, and execute
-          <br />
-          a flawless wedding shot list.
+          Plan, organize, and visualize your wedding day beautifully.
         </h1>
 
         <p
@@ -57,9 +56,9 @@ export default function Home() {
             color: "#555",
           }}
         >
-          PoseSuite connects your couple’s vision with your expertise – a
-          shared space to build family formals, timelines, and inspiration
-          boards, all in one elegant, mobile-friendly workflow.
+          PoseSuite connects your vision with my team&apos;s expertise to build
+          family formals, timelines, and inspiration boards — all in one
+          elegant workflow.
         </p>
 
         <button
@@ -87,11 +86,11 @@ export default function Home() {
             color: "#777",
           }}
         >
-          Coming soon – built for photographers who serve luxury weddings.
+          Built for couples who value calm, clarity, and timeless imagery.
         </p>
       </section>
 
-      {/* HOW IT WORKS */}
+      {/* HOW IT WORKS / TAGLINE */}
       <section
         style={{
           padding: "3rem 1.5rem 4rem",
@@ -108,7 +107,7 @@ export default function Home() {
             marginBottom: "2.5rem",
           }}
         >
-          A calm, organized home for your wedding photography workflow.
+          A calm, organized home for your wedding photography vision board.
         </h2>
 
         <div
@@ -200,7 +199,7 @@ export default function Home() {
                 marginBottom: "1rem",
               }}
             >
-              Built for photographers who think in stories, not checklists.
+              Built so your wedding day feels calm, intentional, and fully seen.
             </h2>
             <p
               style={{
@@ -209,10 +208,10 @@ export default function Home() {
                 marginBottom: "1.5rem",
               }}
             >
-              PoseSuite is your private planning room: a dedicated project hub
-              for each wedding, complete with a family shot builder, timeline,
-              photographer-only notes, and inspiration boards you can check off
-              as you shoot.
+              PoseSuite is your private planning room for Garbero Photography:
+              a dedicated hub for your family formals, timeline, special
+              considerations, and inspiration images we&apos;ll bring to life on
+              the day.
             </p>
             <ul
               style={{
@@ -224,16 +223,16 @@ export default function Home() {
               }}
             >
               <li style={{ marginBottom: "0.65rem" }}>
-                ✅ Family & formals shot builder with mobility + accessibility notes
+                ✅ Guided family shot builder with space for names and dynamics
               </li>
               <li style={{ marginBottom: "0.65rem" }}>
-                ✅ Client-facing must-have photo uploads
+                ✅ Timeline notes so we know where to be, and when
               </li>
               <li style={{ marginBottom: "0.65rem" }}>
-                ✅ Photographer-only gear notes and visual inspiration board
+                ✅ Upload your must-have inspiration images and traditions
               </li>
               <li>
-                ✅ Day-of mobile view so you always know what&apos;s next
+                ✅ Day-of reference so we can focus on you, not the checklist
               </li>
             </ul>
           </div>
@@ -255,7 +254,7 @@ export default function Home() {
                 marginBottom: "0.75rem",
               }}
             >
-              Coming Soon
+              Working with Garbero Photography
             </h3>
             <p
               style={{
@@ -264,9 +263,9 @@ export default function Home() {
                 marginBottom: "1.2rem",
               }}
             >
-              PoseSuite is in active development. Soon you&apos;ll be able to
-              invite clients into their own planning portal and walk into every
-              wedding with total clarity.
+              From your first consultation to your final gallery delivery, my
+              team and I use PoseSuite behind the scenes to keep everything
+              organized, thoughtful, and tailored to your story.
             </p>
             <p
               style={{
@@ -275,8 +274,8 @@ export default function Home() {
                 fontStyle: "italic",
               }}
             >
-              Built by a working photographer who knows how chaotic wedding days
-              can be — and how powerful it is when everyone is on the same page.
+              You bring the love and the vision. We&apos;ll bring the calm, the
+              direction, and the artistry to photograph it all.
             </p>
           </div>
         </div>
@@ -291,7 +290,7 @@ export default function Home() {
           color: "#777",
         }}
       >
-        © {new Date().getFullYear()} PoseSuite · Created by Garbero Photography
+        © {new Date().getFullYear()} Garbero Photography · PoseSuite
       </footer>
     </main>
   );
