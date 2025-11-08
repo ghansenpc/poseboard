@@ -61,8 +61,10 @@ export default function Home() {
           workflow.
         </p>
 
-        <button
+                <a
+          href="/basics"
           style={{
+            display: "inline-block",
             backgroundColor: "#A3B18A",
             color: "#1F2622",
             border: "none",
@@ -74,10 +76,12 @@ export default function Home() {
             cursor: "pointer",
             fontWeight: 500,
             boxShadow: "0 10px 25px rgba(0,0,0,0.06)",
+            textDecoration: "none",
           }}
         >
           Get Started
-        </button>
+        </a>
+
 
         <p
           style={{
