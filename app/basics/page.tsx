@@ -418,7 +418,7 @@ export default function BasicsPage() {
           </section>
 
           {/* Buttons */}
-          <div
+                    <div
             style={{
               display: "flex",
               justifyContent: "space-between",
@@ -441,8 +441,8 @@ export default function BasicsPage() {
             >
               Save for later (coming soon)
             </button>
-            <button
-              type="submit"
+            <a
+              href="/timeline"
               style={{
                 borderRadius: "999px",
                 border: "none",
@@ -454,11 +454,14 @@ export default function BasicsPage() {
                 textTransform: "uppercase",
                 cursor: "pointer",
                 fontWeight: 500,
+                textDecoration: "none",
+                display: "inline-block",
               }}
             >
               Save & Continue
-            </button>
+            </a>
           </div>
+
         </form>
       </section>
     </main>
