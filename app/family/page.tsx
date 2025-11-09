@@ -2,122 +2,234 @@
 
 import { useState, useEffect } from "react";
 
-type FamilyItemState = {
+type Relationship = "together" | "separatedAmicable" | "separatedSeparate";
+
+type GroupOption = {
   id: string;
-  included: boolean;
+  label: string;
 };
 
-const itemOrder: string[] = [
-  // Partner 1 side first
-  "p1-parents-together",
-  "p1-mom",
-  "p1-dad",
-  "p1-parents-plus-siblings",
-  "p1-siblings-only",
-  "p1-grandparents",
+function getPartnerGroups(
+  status: Relationship,
+  primaryName: string,
+  otherName: string,
+  sidePrefix: string
+): GroupOption[] {
+  const p = primaryName || "Partner";
+  const o = otherName || "Partner";
 
-  // Both families together
-  "both-couple-with-p1-parents",
-  "both-couple-with-p2-parents",
-  "both-couple-with-both-parents",
-  "both-couple-with-immediate-both-sides",
+  if (status === "together") {
+    // Partner parents happily together – Group A
+    return [
+      {
+        id: `${sidePrefix}-mom`,
+        label: `${p} with mom`,
+      },
+      {
+        id: `${sidePrefix}-dad`,
+        label: `${p} with dad`,
+      },
+      {
+        id: `${sidePrefix}-parents-together`,
+        label: `${p} with mom and dad together`,
+      },
+      {
+        id: `${sidePrefix}-couple-with-parents`,
+        label: `${p} & ${o} with ${p}'s parents`,
+      },
+      {
+        id: `${sidePrefix}-couple-with-parents-siblings`,
+        label: `${p} & ${o} with ${p}'s parents and siblings`,
+      },
+      {
+        id: `${sidePrefix}-couple-with-parents-siblings-grandparents`,
+        label: `${p} & ${o} with ${p}'s parents, siblings, and grandparents`,
+      },
+      {
+        id: `${sidePrefix}-couple-with-grandparents`,
+        label: `${p} & ${o} with ${p}'s grandparents`,
+      },
+      {
+        id: `${sidePrefix}-with-grandmother`,
+        label: `${p} with grandmother`,
+      },
+      {
+        id: `${sidePrefix}-with-grandfather`,
+        label: `${p} with grandfather`,
+      },
+      {
+        id: `${sidePrefix}-with-grandparents`,
+        label: `${p} with grandparents`,
+      },
+      {
+        id: `${sidePrefix}-with-siblings`,
+        label: `${p} with siblings`,
+      },
+    ];
+  }
 
-  // Partner 2 side last
-  "p2-parents-together",
-  "p2-mom",
-  "p2-dad",
-  "p2-parents-plus-siblings",
-  "p2-siblings-only",
-  "p2-grandparents",
-];
+  if (status === "separatedAmicable") {
+    // Partner parents separated but comfortable together – Group B
+    return [
+      {
+        id: `${sidePrefix}-mom`,
+        label: `${p} with mom`,
+      },
+      {
+        id: `${sidePrefix}-dad`,
+        label: `${p} with dad`,
+      },
+      {
+        id: `${sidePrefix}-parents-together`,
+        label: `${p} with mom and dad together`,
+      },
+      {
+        id: `${sidePrefix}-couple-with-parents`,
+        label: `${p} & ${o} with ${p}'s parents`,
+      },
+      {
+        id: `${sidePrefix}-couple-with-parents-siblings`,
+        label: `${p} & ${o} with ${p}'s parents and siblings`,
+      },
+      {
+        id: `${sidePrefix}-couple-mom-partner`,
+        label: `${p} & ${o} with mom and her partner`,
+      },
+      {
+        id: `${sidePrefix}-couple-mom-partner-siblings`,
+        label: `${p} & ${o} with mom, her partner, and siblings`,
+      },
+      {
+        id: `${sidePrefix}-couple-dad-partner`,
+        label: `${p} & ${o} with dad and his partner`,
+      },
+      {
+        id: `${sidePrefix}-couple-dad-partner-siblings`,
+        label: `${p} & ${o} with dad, his partner, and siblings`,
+      },
+      {
+        id: `${sidePrefix}-couple-both-parents-partners`,
+        label: `${p} & ${o} with both parents and their partners`,
+      },
+      {
+        id: `${sidePrefix}-couple-both-parents-partners-siblings`,
+        label: `${p} & ${o} with both parents, their partners, and siblings`,
+      },
+      {
+        id: `${sidePrefix}-couple-with-grandparents`,
+        label: `${p} & ${o} with ${p}'s grandparents`,
+      },
+      {
+        id: `${sidePrefix}-with-grandmother`,
+        label: `${p} with grandmother`,
+      },
+      {
+        id: `${sidePrefix}-with-grandfather`,
+        label: `${p} with grandfather`,
+      },
+      {
+        id: `${sidePrefix}-with-grandparents`,
+        label: `${p} with grandparents`,
+      },
+    ];
+  }
 
-function buildLabel(
-  id: string,
+  // status === "separatedSeparate"
+  // Partner parents separated – prefer separate photos – Group C
+  return [
+    {
+      id: `${sidePrefix}-mom`,
+      label: `${p} with mom`,
+    },
+    {
+      id: `${sidePrefix}-dad`,
+      label: `${p} with dad`,
+    },
+    {
+      id: `${sidePrefix}-couple-mom-partner`,
+      label: `${p} & ${o} with mom and her partner (if applicable)`,
+    },
+    {
+      id: `${sidePrefix}-couple-mom-partner-siblings`,
+      label: `${p} & ${o} with mom, her partner, and siblings`,
+    },
+    {
+      id: `${sidePrefix}-couple-dad-partner`,
+      label: `${p} & ${o} with dad and his partner (if applicable)`,
+    },
+    {
+      id: `${sidePrefix}-couple-dad-partner-siblings`,
+      label: `${p} & ${o} with dad, his partner, and siblings`,
+    },
+    {
+      id: `${sidePrefix}-couple-dad-grandparents`,
+      label: `${p} & ${o} with dad and his parents`,
+    },
+    {
+      id: `${sidePrefix}-couple-mom-grandparents`,
+      label: `${p} & ${o} with mom and her parents`,
+    },
+    {
+      id: `${sidePrefix}-couple-with-siblings`,
+      label: `${p} & ${o} with siblings`,
+    },
+    {
+      id: `${sidePrefix}-with-siblings`,
+      label: `${p} with siblings`,
+    },
+    {
+      id: `${sidePrefix}-couple-with-grandparents`,
+      label: `${p} & ${o} with ${p}'s grandparents`,
+    },
+    {
+      id: `${sidePrefix}-with-grandmother`,
+      label: `${p} with grandmother`,
+    },
+    {
+      id: `${sidePrefix}-with-grandfather`,
+      label: `${p} with grandfather`,
+    },
+    {
+      id: `${sidePrefix}-with-grandparents`,
+      label: `${p} with grandparents`,
+    },
+  ];
+}
+
+function getBothFamiliesGroups(
   partner1Name: string,
   partner2Name: string
-): { section: "p1" | "p2" | "both"; label: string } {
+): GroupOption[] {
   const p1 = partner1Name || "Partner 1";
   const p2 = partner2Name || "Partner 2";
 
-  switch (id) {
-    // Partner 1 side
-    case "p1-parents-together":
-      return { section: "p1", label: `${p1} with parents` };
-    case "p1-mom":
-      return { section: "p1", label: `${p1} with mom` };
-    case "p1-dad":
-      return { section: "p1", label: `${p1} with dad` };
-    case "p1-parents-plus-siblings":
-      return { section: "p1", label: `${p1} with parents and siblings` };
-    case "p1-siblings-only":
-      return { section: "p1", label: `${p1} with siblings only` };
-    case "p1-grandparents":
-      return { section: "p1", label: `${p1} with grandparents` };
-
-    // Combined
-    case "both-couple-with-p1-parents":
-      return {
-        section: "both",
-        label: `${p1} & ${p2} with ${p1}'s parents`,
-      };
-    case "both-couple-with-p2-parents":
-      return {
-        section: "both",
-        label: `${p1} & ${p2} with ${p2}'s parents`,
-      };
-    case "both-couple-with-both-parents":
-      return {
-        section: "both",
-        label: `${p1} & ${p2} with both sets of parents`,
-      };
-    case "both-couple-with-immediate-both-sides":
-      return {
-        section: "both",
-        label: `${p1} & ${p2} with immediate family (both sides)`,
-      };
-
-    // Partner 2 side
-    case "p2-parents-together":
-      return { section: "p2", label: `${p2} with parents` };
-    case "p2-mom":
-      return { section: "p2", label: `${p2} with mom` };
-    case "p2-dad":
-      return { section: "p2", label: `${p2} with dad` };
-    case "p2-parents-plus-siblings":
-      return { section: "p2", label: `${p2} with parents and siblings` };
-    case "p2-siblings-only":
-      return { section: "p2", label: `${p2} with siblings only` };
-    case "p2-grandparents":
-      return { section: "p2", label: `${p2} with grandparents` };
-
-    default:
-      return { section: "p1", label: id };
-  }
+  return [
+    {
+      id: "both-parents",
+      label: `${p1} & ${p2} with both sets of parents`,
+    },
+    {
+      id: "both-parents-partners",
+      label: `${p1} & ${p2} with both sets of parents and their partners (if applicable)`,
+    },
+    {
+      id: "both-parents-siblings",
+      label: `${p1} & ${p2} with both sets of parents and siblings (full immediate families)`,
+    },
+  ];
 }
-
-type DivorceState = {
-  p1ParentsDivorced: boolean;
-  p1ParentsHavePartners: boolean;
-  p2ParentsDivorced: boolean;
-  p2ParentsHavePartners: boolean;
-};
 
 export default function FamilyPage() {
   const [partner1Name, setPartner1Name] = useState("Partner 1");
   const [partner2Name, setPartner2Name] = useState("Partner 2");
 
-  const [items, setItems] = useState<FamilyItemState[]>(() =>
-    itemOrder.map((id) => ({ id, included: false }))
-  );
+  const [p1Status, setP1Status] = useState<Relationship>("together");
+  const [p2Status, setP2Status] = useState<Relationship>("together");
 
-  const [divorceState, setDivorceState] = useState<DivorceState>({
-    p1ParentsDivorced: false,
-    p1ParentsHavePartners: false,
-    p2ParentsDivorced: false,
-    p2ParentsHavePartners: false,
-  });
+  const [p1Selected, setP1Selected] = useState<string[]>([]);
+  const [p2Selected, setP2Selected] = useState<string[]>([]);
+  const [bothSelected, setBothSelected] = useState<string[]>([]);
 
-  // Load partner names from Basics
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
@@ -136,30 +248,37 @@ export default function FamilyPage() {
     }
   }, []);
 
-  const toggleIncluded = (id: string) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, included: !item.included } : item
-      )
+  const toggleP1 = (id: string) => {
+    setP1Selected((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
-  const updateDivorceState = (field: keyof DivorceState) => {
-    setDivorceState((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
+  const toggleP2 = (id: string) => {
+    setP2Selected((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
   };
 
-  const partner1Items = items.filter(
-    (item) => buildLabel(item.id, partner1Name, partner2Name).section === "p1"
+  const toggleBoth = (id: string) => {
+    setBothSelected((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const p1Groups = getPartnerGroups(
+    p1Status,
+    partner1Name,
+    partner2Name,
+    "p1"
   );
-  const partner2Items = items.filter(
-    (item) => buildLabel(item.id, partner1Name, partner2Name).section === "p2"
+  const p2Groups = getPartnerGroups(
+    p2Status,
+    partner2Name,
+    partner1Name,
+    "p2"
   );
-  const bothItems = items.filter(
-    (item) => buildLabel(item.id, partner1Name, partner2Name).section === "both"
-  );
+  const bothGroups = getBothFamiliesGroups(partner1Name, partner2Name);
 
   return (
     <main
@@ -228,7 +347,7 @@ export default function FamilyPage() {
                 margin: 0,
               }}
             >
-              During formal portrait time, we&apos;ll focus on your closest
+              During formal portrait time we&apos;ll focus on your closest
               family so everything feels calm and efficient. We&apos;ll have the
               whole reception for extended family photos at dinner and on the
               dance floor.
@@ -252,141 +371,8 @@ export default function FamilyPage() {
           </a>
         </div>
 
-        {/* Family structure / divorced parents */}
-        <section
-          style={{
-            marginBottom: "2rem",
-            borderRadius: "1rem",
-            border: "1px solid #E2E2DD",
-            padding: "1.1rem 1rem 1.2rem",
-            backgroundColor: "#FCFCF9",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "1.0rem",
-              fontWeight: 600,
-              marginBottom: "0.4rem",
-            }}
-          >
-            Family structure details
-          </h2>
-          <p
-            style={{
-              fontSize: "0.9rem",
-              color: "#666",
-              marginBottom: "0.9rem",
-            }}
-          >
-            This helps me plan groupings kindly and efficiently if there are
-            divorced parents or important partners/step-parents to include.
-          </p>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: "0.6rem",
-              fontSize: "0.9rem",
-            }}
-          >
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={divorceState.p1ParentsDivorced}
-                onChange={() =>
-                  updateDivorceState("p1ParentsDivorced")
-                }
-                style={{ accentColor: "#A3B18A" }}
-              />
-              <span>
-                {partner1Name || "Partner 1"}&apos;s parents are divorced
-              </span>
-            </label>
-
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={divorceState.p1ParentsHavePartners}
-                onChange={() =>
-                  updateDivorceState("p1ParentsHavePartners")
-                }
-                style={{ accentColor: "#A3B18A" }}
-              />
-              <span>
-                {partner1Name || "Partner 1"}&apos;s parents have partners /
-                step-parents to include
-              </span>
-            </label>
-
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={divorceState.p2ParentsDivorced}
-                onChange={() =>
-                  updateDivorceState("p2ParentsDivorced")
-                }
-                style={{ accentColor: "#A3B18A" }}
-              />
-              <span>
-                {partner2Name || "Partner 2"}&apos;s parents are divorced
-              </span>
-            </label>
-
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={divorceState.p2ParentsHavePartners}
-                onChange={() =>
-                  updateDivorceState("p2ParentsHavePartners")
-                }
-                style={{ accentColor: "#A3B18A" }}
-              />
-              <span>
-                {partner2Name || "Partner 2"}&apos;s parents have partners /
-                step-parents to include
-              </span>
-            </label>
-          </div>
-
-          <p
-            style={{
-              fontSize: "0.8rem",
-              color: "#888",
-              marginTop: "0.7rem",
-            }}
-          >
-            We&apos;ll use this information to plan kind, comfortable groupings
-            on the day — especially when we build your final day-of checklist.
-          </p>
-        </section>
-
-        {/* Partner 1 family */}
-        <section style={{ marginBottom: "2rem" }}>
+        {/* Partner 1 section */}
+        <section style={{ marginBottom: "2.25rem" }}>
           <h2
             style={{
               fontSize: "1.05rem",
@@ -400,50 +386,226 @@ export default function FamilyPage() {
             style={{
               fontSize: "0.9rem",
               color: "#666",
-              marginBottom: "1rem",
+              marginBottom: "0.75rem",
             }}
           >
-            Check the groupings you&apos;d like during formal portrait time for
-            this side of the family.
+            Choose the option that best reflects {partner1Name || "Partner 1"}
+            &apos;s parents, then check the groupings you&apos;d like during
+            formal portrait time.
           </p>
 
+          {/* Relationship selector */}
+          <div
+            style={{
+              borderRadius: "0.9rem",
+              border: "1px solid #E2E2DD",
+              padding: "0.75rem 0.85rem",
+              backgroundColor: "#FCFCF9",
+              marginBottom: "1rem",
+              fontSize: "0.9rem",
+              display: "grid",
+              gap: "0.4rem",
+            }}
+          >
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <input
+                type="radio"
+                name="p1-status"
+                value="together"
+                checked={p1Status === "together"}
+                onChange={() => setP1Status("together")}
+              />
+              <span>Parents happily together</span>
+            </label>
+
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <input
+                type="radio"
+                name="p1-status"
+                value="separatedAmicable"
+                checked={p1Status === "separatedAmicable"}
+                onChange={() => setP1Status("separatedAmicable")}
+              />
+              <span>Parents separated but comfortable being photographed together</span>
+            </label>
+
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <input
+                type="radio"
+                name="p1-status"
+                value="separatedSeparate"
+                checked={p1Status === "separatedSeparate"}
+                onChange={() => setP1Status("separatedSeparate")}
+              />
+              <span>Parents separated and prefer separate photos</span>
+            </label>
+          </div>
+
+          {/* Partner 1 groups checklist */}
           <div style={{ display: "grid", gap: "0.6rem" }}>
-            {partner1Items.map((item) => {
-              const { label } = buildLabel(
-                item.id,
-                partner1Name,
-                partner2Name
-              );
-              return (
-                <label
-                  key={item.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.6rem",
-                    padding: "0.55rem 0.8rem",
-                    borderRadius: "0.8rem",
-                    border: "1px solid #E2E2DD",
-                    backgroundColor: "#FCFCF9",
-                    fontSize: "0.95rem",
-                    cursor: "pointer",
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={item.included}
-                    onChange={() => toggleIncluded(item.id)}
-                    style={{ accentColor: "#A3B18A" }}
-                  />
-                  <span>{label}</span>
-                </label>
-              );
-            })}
+            {p1Groups.map((group) => (
+              <label
+                key={group.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.6rem",
+                  padding: "0.55rem 0.8rem",
+                  borderRadius: "0.8rem",
+                  border: "1px solid #E2E2DD",
+                  backgroundColor: "#FCFCF9",
+                  fontSize: "0.95rem",
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={p1Selected.includes(group.id)}
+                  onChange={() => toggleP1(group.id)}
+                  style={{ accentColor: "#A3B18A" }}
+                />
+                <span>{group.label}</span>
+              </label>
+            ))}
+          </div>
+        </section>
+
+        {/* Partner 2 section */}
+        <section style={{ marginBottom: "2.25rem" }}>
+          <h2
+            style={{
+              fontSize: "1.05rem",
+              fontWeight: 600,
+              marginBottom: "0.5rem",
+            }}
+          >
+            {partner2Name || "Partner 2"}&apos;s family
+          </h2>
+          <p
+            style={{
+              fontSize: "0.9rem",
+              color: "#666",
+              marginBottom: "0.75rem",
+            }}
+          >
+            Same idea here for {partner2Name || "Partner 2"}&apos;s side of the
+            family.
+          </p>
+
+          {/* Relationship selector */}
+          <div
+            style={{
+              borderRadius: "0.9rem",
+              border: "1px solid #E2E2DD",
+              padding: "0.75rem 0.85rem",
+              backgroundColor: "#FCFCF9",
+              marginBottom: "1rem",
+              fontSize: "0.9rem",
+              display: "grid",
+              gap: "0.4rem",
+            }}
+          >
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <input
+                type="radio"
+                name="p2-status"
+                value="together"
+                checked={p2Status === "together"}
+                onChange={() => setP2Status("together")}
+              />
+              <span>Parents happily together</span>
+            </label>
+
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <input
+                type="radio"
+                name="p2-status"
+                value="separatedAmicable"
+                checked={p2Status === "separatedAmicable"}
+                onChange={() => setP2Status("separatedAmicable")}
+              />
+              <span>Parents separated but comfortable being photographed together</span>
+            </label>
+
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <input
+                type="radio"
+                name="p2-status"
+                value="separatedSeparate"
+                checked={p2Status === "separatedSeparate"}
+                onChange={() => setP2Status("separatedSeparate")}
+              />
+              <span>Parents separated and prefer separate photos</span>
+            </label>
+          </div>
+
+          {/* Partner 2 groups checklist */}
+          <div style={{ display: "grid", gap: "0.6rem" }}>
+            {p2Groups.map((group) => (
+              <label
+                key={group.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.6rem",
+                  padding: "0.55rem 0.8rem",
+                  borderRadius: "0.8rem",
+                  border: "1px solid #E2E2DD",
+                  backgroundColor: "#FCFCF9",
+                  fontSize: "0.95rem",
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={p2Selected.includes(group.id)}
+                  onChange={() => toggleP2(group.id)}
+                  style={{ accentColor: "#A3B18A" }}
+                />
+                <span>{group.label}</span>
+              </label>
+            ))}
           </div>
         </section>
 
         {/* Both families together */}
-        <section style={{ marginBottom: "2rem" }}>
+        <section style={{ marginBottom: "1.75rem" }}>
           <h2
             style={{
               fontSize: "1.05rem",
@@ -460,98 +622,35 @@ export default function FamilyPage() {
               marginBottom: "1rem",
             }}
           >
-            These are the &quot;big picture&quot; photos with both families —
-            often right after individual sides.
+            These are the bigger &quot;everyone together&quot; photos with both
+            families — often right after we finish each side individually.
           </p>
 
           <div style={{ display: "grid", gap: "0.6rem" }}>
-            {bothItems.map((item) => {
-              const { label } = buildLabel(
-                item.id,
-                partner1Name,
-                partner2Name
-              );
-              return (
-                <label
-                  key={item.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.6rem",
-                    padding: "0.55rem 0.8rem",
-                    borderRadius: "0.8rem",
-                    border: "1px solid #E2E2DD",
-                    backgroundColor: "#FCFCF9",
-                    fontSize: "0.95rem",
-                    cursor: "pointer",
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={item.included}
-                    onChange={() => toggleIncluded(item.id)}
-                    style={{ accentColor: "#A3B18A" }}
-                  />
-                  <span>{label}</span>
-                </label>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Partner 2 family */}
-        <section style={{ marginBottom: "1.5rem" }}>
-          <h2
-            style={{
-              fontSize: "1.05rem",
-              fontWeight: 600,
-              marginBottom: "0.5rem",
-            }}
-          >
-            {partner2Name || "Partner 2"}&apos;s family (usually after group photo)
-          </h2>
-          <p
-            style={{
-              fontSize: "0.9rem",
-              color: "#666",
-              marginBottom: "1rem",
-            }}
-          >
-            Check the groupings for this side of the family.
-          </p>
-
-          <div style={{ display: "grid", gap: "0.6rem" }}>
-            {partner2Items.map((item) => {
-              const { label } = buildLabel(
-                item.id,
-                partner1Name,
-                partner2Name
-              );
-              return (
-                <label
-                  key={item.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.6rem",
-                    padding: "0.55rem 0.8rem",
-                    borderRadius: "0.8rem",
-                    border: "1px solid #E2E2DD",
-                    backgroundColor: "#FCFCF9",
-                    fontSize: "0.95rem",
-                    cursor: "pointer",
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={item.included}
-                    onChange={() => toggleIncluded(item.id)}
-                    style={{ accentColor: "#A3B18A" }}
-                  />
-                  <span>{label}</span>
-                </label>
-              );
-            })}
+            {bothGroups.map((group) => (
+              <label
+                key={group.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.6rem",
+                  padding: "0.55rem 0.8rem",
+                  borderRadius: "0.8rem",
+                  border: "1px solid #E2E2DD",
+                  backgroundColor: "#FCFCF9",
+                  fontSize: "0.95rem",
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={bothSelected.includes(group.id)}
+                  onChange={() => toggleBoth(group.id)}
+                  style={{ accentColor: "#A3B18A" }}
+                />
+                <span>{group.label}</span>
+              </label>
+            ))}
           </div>
         </section>
 
@@ -626,8 +725,8 @@ export default function FamilyPage() {
           marginTop: "1rem",
         }}
       >
-        Later, these selections will feed into your day-of PoseSuite checklist
-        so we can move through family photos in a calm, efficient order.
+        Later, these selections can flow into your day-of PoseSuite checklist so
+        we can move through family photos in a calm, efficient order.
       </p>
     </main>
   );
