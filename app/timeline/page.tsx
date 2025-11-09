@@ -136,10 +136,45 @@ export default function TimelinePage() {
           setPartner2Name(data.partner2Name);
         }
       }
+
+      const timelineRaw = window.localStorage.getItem("posesuiteTimeline");
+      if (timelineRaw) {
+        const t = JSON.parse(timelineRaw);
+        if (Array.isArray(t.items)) {
+          setItems(
+            itemOrder.map((id) => {
+              const found = t.items.find((x: any) => x.id === id);
+              return {
+                id,
+                included: !!found?.included,
+              };
+            })
+          );
+        }
+        if (Array.isArray(t.customItems)) {
+          setCustomItems(
+            t.customItems.map((c: any) => ({
+              id: c.id,
+              label: c.label ?? "",
+              included: !!c.included,
+            }))
+          );
+        }
+      }
     } catch {
       // ignore
     }
   }, []);
+
+  // Save timeline selections so other pages (like must-have shots) can use them
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const payload = {
+      items,
+      customItems,
+    };
+    window.localStorage.setItem("posesuiteTimeline", JSON.stringify(payload));
+  }, [items, customItems]);
 
   const toggleIncluded = (id: string, source: "default" | "custom") => {
     if (source === "default") {
