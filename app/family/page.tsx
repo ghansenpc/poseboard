@@ -747,6 +747,7 @@ export default function FamilyPage() {
         </section>
 
         {/* Bottom controls */}
+               {/* Bottom controls */}
         <div
           style={{
             display: "flex",
@@ -770,8 +771,8 @@ export default function FamilyPage() {
           >
             Save for later (coming soon)
           </button>
-          <button
-            type="button"
+          <a
+            href="/must-haves"
             style={{
               borderRadius: "999px",
               border: "none",
@@ -783,11 +784,14 @@ export default function FamilyPage() {
               textTransform: "uppercase",
               cursor: "pointer",
               fontWeight: 500,
+              textDecoration: "none",
+              display: "inline-block",
             }}
           >
             This looks good (for now)
-          </button>
+          </a>
         </div>
+
       </section>
 
       <p
