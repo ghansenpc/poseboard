@@ -7,6 +7,17 @@ type ShotTemplate = {
   buildLabel: (p1: string, p2: string) => string;
 };
 
+type TimelineStoredItem = {
+  id: string;
+  included: boolean;
+};
+
+type InspirationSlot = {
+  id: string;
+  imageDataUrl: string | null;
+  note: string;
+};
+
 const prep1Shots: ShotTemplate[] = [
   {
     id: "prep1-room-details",
@@ -22,11 +33,13 @@ const prep1Shots: ShotTemplate[] = [
   },
   {
     id: "prep1-getting-dressed",
-    buildLabel: (p1) => `${p1} getting into outfit with a helper (parent or friend)`,
+    buildLabel: (p1) =>
+      `${p1} getting into outfit with a helper (parent or friend)`,
   },
   {
     id: "prep1-with-party",
-    buildLabel: (p1) => `${p1} with wedding party in the getting-ready room`,
+    buildLabel: (p1) =>
+      `${p1} with wedding party in the getting-ready room`,
   },
   {
     id: "prep1-with-parents",
@@ -101,7 +114,8 @@ const portraitsShots: ShotTemplate[] = [
   },
   {
     id: "portraits-family-core",
-    buildLabel: () => "Core family groupings from your family portrait list",
+    buildLabel: () =>
+      "Core family groupings from your family portrait list",
   },
   {
     id: "portraits-wedding-party",
@@ -149,7 +163,8 @@ const receptionShots: ShotTemplate[] = [
   },
   {
     id: "reception-exit",
-    buildLabel: () => "Planned exit (sparklers, bubbles, etc., if happening)",
+    buildLabel: () =>
+      "Planned exit (sparklers, bubbles, etc., if happening)",
   },
 ];
 
@@ -161,24 +176,27 @@ const allShotTemplates: ShotTemplate[] = [
   ...receptionShots,
 ];
 
-type TimelineStoredItem = {
-  id: string;
-  included: boolean;
-};
-
 export default function MustHavesPage() {
   const [partner1Name, setPartner1Name] = useState("Partner 1");
   const [partner2Name, setPartner2Name] = useState("Partner 2");
 
-  const [timelineIncludedIds, setTimelineIncludedIds] = useState<string[] | null>(
-    null
-  );
+  const [timelineIncludedIds, setTimelineIncludedIds] =
+    useState<string[] | null>(null);
 
   const [selectedShotIds, setSelectedShotIds] = useState<string[]>(() =>
     allShotTemplates.map((t) => t.id)
   );
 
-  // Load basics + timeline + saved must-haves
+  const [inspirationSlots, setInspirationSlots] = useState<InspirationSlot[]>(
+    () =>
+      Array.from({ length: 6 }, (_, i) => ({
+        id: `slot-${i}`,
+        imageDataUrl: null,
+        note: "",
+      }))
+  );
+
+  // Load basics + timeline + saved must-haves (including inspiration)
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
@@ -210,24 +228,61 @@ export default function MustHavesPage() {
         if (Array.isArray(saved.selectedShotIds)) {
           setSelectedShotIds(saved.selectedShotIds);
         }
+        if (Array.isArray(saved.inspirationSlots)) {
+          setInspirationSlots(
+            saved.inspirationSlots.map(
+              (slot: any, index: number): InspirationSlot => ({
+                id: typeof slot.id === "string" ? slot.id : `slot-${index}`,
+                imageDataUrl:
+                  typeof slot.imageDataUrl === "string"
+                    ? slot.imageDataUrl
+                    : null,
+                note: typeof slot.note === "string" ? slot.note : "",
+              })
+            )
+          );
+        }
       }
     } catch {
       // ignore
     }
   }, []);
 
-  // Save must-have selections
+  // Save must-have selections + inspiration slots for day-of use
   useEffect(() => {
     if (typeof window === "undefined") return;
     const payload = {
       selectedShotIds,
+      inspirationSlots,
     };
     window.localStorage.setItem("posesuiteMustHaves", JSON.stringify(payload));
-  }, [selectedShotIds]);
+  }, [selectedShotIds, inspirationSlots]);
 
   const toggleShot = (id: string) => {
     setSelectedShotIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleImageChange = (slotId: string, file: File | null) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const dataUrl = reader.result as string;
+      setInspirationSlots((prev) =>
+        prev.map((slot) =>
+          slot.id === slotId ? { ...slot, imageDataUrl: dataUrl } : slot
+        )
+      );
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleNoteChange = (slotId: string, value: string) => {
+    setInspirationSlots((prev) =>
+      prev.map((slot) =>
+        slot.id === slotId ? { ...slot, note: value } : slot
+      )
     );
   };
 
@@ -469,6 +524,119 @@ export default function MustHavesPage() {
             receptionShots
           )}
 
+        {/* Specific inspiration uploads */}
+        <section style={{ marginTop: "1.5rem", marginBottom: "2rem" }}>
+          <h2
+            style={{
+              fontSize: "1.05rem",
+              fontWeight: 600,
+              marginBottom: "0.5rem",
+            }}
+          >
+            Specific inspiration requests
+          </h2>
+          <p
+            style={{
+              fontSize: "0.9rem",
+              color: "#666",
+              marginBottom: "1rem",
+              maxWidth: "640px",
+            }}
+          >
+            If there are a few images you&apos;d really love me to keep in mind
+            — a favorite Pinterest photo, a classic shot from your venue, or a
+            family tradition we recreate at every gathering — you can upload up
+            to six here. I&apos;ll treat these as special requests and keep them
+            handy on your day-of PoseSuite view.
+          </p>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+              gap: "1rem",
+            }}
+          >
+            {inspirationSlots.map((slot, index) => (
+              <div
+                key={slot.id}
+                style={{
+                  borderRadius: "1rem",
+                  border: "1px solid #E2E2DD",
+                  padding: "0.75rem",
+                  backgroundColor: "#FCFCF9",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    aspectRatio: "1 / 1",
+                    borderRadius: "0.75rem",
+                    backgroundColor: "#F2F2EE",
+                    border: "1px dashed #D4D4CF",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                    marginBottom: "0.4rem",
+                  }}
+                >
+                  {slot.imageDataUrl ? (
+                    <img
+                      src={slot.imageDataUrl}
+                      alt={`Inspiration ${index + 1}`}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        display: "block",
+                      }}
+                    />
+                  ) : (
+                    <span
+                      style={{
+                        fontSize: "0.75rem",
+                        color: "#999",
+                        textAlign: "center",
+                        padding: "0.25rem",
+                      }}
+                    >
+                      Upload inspiration #{index + 1}
+                    </span>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file =
+                      (e.target as HTMLInputElement).files?.[0] || null;
+                    handleImageChange(slot.id, file);
+                  }}
+                  style={{ fontSize: "0.75rem" }}
+                />
+                <textarea
+                  value={slot.note}
+                  onChange={(e) => handleNoteChange(slot.id, e.target.value)}
+                  placeholder="Why is this important? (e.g. 'Photo on the venue steps we love', 'Grandma's favorite pose', 'Our must-have Pinterest shot')"
+                  rows={2}
+                  style={{
+                    width: "100%",
+                    borderRadius: "0.6rem",
+                    border: "1px solid #E2E2DD",
+                    fontSize: "0.8rem",
+                    padding: "0.4rem 0.45rem",
+                    resize: "none",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Bottom controls */}
         <div
           style={{
@@ -521,9 +689,9 @@ export default function MustHavesPage() {
           marginTop: "1rem",
         }}
       >
-        Later, these selected must-have shots can feed directly into your
-        day-of PoseSuite view so I can work through them without a giant
-        Pinterest checklist.
+        Later, these selected must-have shots and inspiration images can feed
+        directly into your day-of PoseSuite view so I can work through them
+        without a giant Pinterest checklist.
       </p>
     </main>
   );
