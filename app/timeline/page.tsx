@@ -7,7 +7,6 @@ type TimelineItemState = {
   included: boolean;
 };
 
-// Order of items, logic for labels will use these IDs
 const itemOrder: string[] = [
   "partner1-prep",
   "partner2-prep",
@@ -124,7 +123,6 @@ export default function TimelinePage() {
   );
   const [customItems, setCustomItems] = useState<CustomItem[]>([]);
 
-  // Load partner names from localStorage once on mount
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
@@ -139,7 +137,7 @@ export default function TimelinePage() {
         }
       }
     } catch {
-      // ignore if parsing fails
+      // ignore
     }
   }, []);
 
@@ -410,47 +408,63 @@ export default function TimelinePage() {
           </button>
         </section>
 
-        {/* Bottom controls */}
+        {/* Bottom controls with guidance */}
         <div
           style={{
             display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
+            flexDirection: "column",
+            alignItems: "flex-end",
             marginTop: "2rem",
             gap: "0.75rem",
-            flexWrap: "wrap",
           }}
         >
-          <button
-            type="button"
+          <p
             style={{
-              borderRadius: "999px",
-              border: "1px solid #D4D4CF",
-              backgroundColor: "#FFFFFF",
-              padding: "0.7rem 1.8rem",
               fontSize: "0.9rem",
-              cursor: "pointer",
+              color: "#555",
+              textAlign: "right",
+              maxWidth: "460px",
+              marginBottom: "0.5rem",
             }}
           >
-            Save for later (coming soon)
-          </button>
-          <button
-            type="button"
-            style={{
-              borderRadius: "999px",
-              border: "none",
-              backgroundColor: "#A3B18A",
-              color: "#1F2622",
-              padding: "0.85rem 2.4rem",
-              fontSize: "0.95rem",
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              cursor: "pointer",
-              fontWeight: 500,
-            }}
-          >
-            This looks good (for now)
-          </button>
+            Next, tell me who your family is so we can make sure everyone
+            important is included in your family shot list.
+          </p>
+
+          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              style={{
+                borderRadius: "999px",
+                border: "1px solid #D4D4CF",
+                backgroundColor: "#FFFFFF",
+                padding: "0.7rem 1.8rem",
+                fontSize: "0.9rem",
+                cursor: "pointer",
+              }}
+            >
+              Save for later (coming soon)
+            </button>
+            <a
+              href="/family"
+              style={{
+                borderRadius: "999px",
+                border: "none",
+                backgroundColor: "#A3B18A",
+                color: "#1F2622",
+                padding: "0.85rem 2.4rem",
+                fontSize: "0.95rem",
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                cursor: "pointer",
+                fontWeight: 500,
+                textDecoration: "none",
+                display: "inline-block",
+              }}
+            >
+              This looks good (for now)
+            </a>
+          </div>
         </div>
       </section>
 
