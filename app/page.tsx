@@ -1,4 +1,213 @@
-export default function Home() {
+"use client";
+
+import { useState } from "react";
+
+type TimelineItem = {
+  id: string;
+  label: string;
+  time: string;
+  notes: string;
+  included: boolean;
+};
+
+const defaultItems: TimelineItem[] = [
+  {
+    id: "hair-makeup",
+    label: "Hair & makeup",
+    time: "",
+    notes: "When you expect to be mostly ready for photos.",
+    included: true,
+  },
+  {
+    id: "photographer-start",
+    label: "Photographer arrival",
+    time: "",
+    notes: "",
+    included: true,
+  },
+  {
+    id: "videographer-start",
+    label: "Videographer arrival",
+    time: "",
+    notes: "",
+    included: false,
+  },
+  {
+    id: "bride-prep",
+    label: "Bride / Partner 1 getting ready photos",
+    time: "",
+    notes: "",
+    included: true,
+  },
+  {
+    id: "groom-prep",
+    label: "Groom / Partner 2 getting ready photos",
+    time: "",
+    notes: "",
+    included: true,
+  },
+  {
+    id: "bridesmaids-first-look",
+    label: "Bridesmaids / wedding party first look",
+    time: "",
+    notes: "",
+    included: false,
+  },
+  {
+    id: "parent-first-look",
+    label: "Parent first look",
+    time: "",
+    notes: "For example: bride & dad first look.",
+    included: false,
+  },
+  {
+    id: "couple-first-look",
+    label: "Couple first look",
+    time: "",
+    notes: "",
+    included: false,
+  },
+  {
+    id: "ceremony",
+    label: "Ceremony",
+    time: "",
+    notes: "",
+    included: true,
+  },
+  {
+    id: "cocktail-hour",
+    label: "Cocktail hour",
+    time: "",
+    notes: "",
+    included: true,
+  },
+  {
+    id: "family-portraits",
+    label: "Family portraits",
+    time: "",
+    notes: "Usually right after the ceremony or during cocktail hour.",
+    included: true,
+  },
+  {
+    id: "wedding-party-portraits",
+    label: "Wedding party portraits",
+    time: "",
+    notes: "",
+    included: true,
+  },
+  {
+    id: "couple-portraits",
+    label: "Couple portraits",
+    time: "",
+    notes: "Often during golden hour or a quiet moment.",
+    included: true,
+  },
+  {
+    id: "reception-entrance",
+    label: "Reception entrance & intros",
+    time: "",
+    notes: "",
+    included: true,
+  },
+  {
+    id: "first-dance",
+    label: "First dance",
+    time: "",
+    notes: "",
+    included: true,
+  },
+  {
+    id: "parent-dances",
+    label: "Parent dances",
+    time: "",
+    notes: "",
+    included: false,
+  },
+  {
+    id: "toasts",
+    label: "Toasts / speeches",
+    time: "",
+    notes: "",
+    included: true,
+  },
+  {
+    id: "cake-cutting",
+    label: "Cake cutting / dessert moment",
+    time: "",
+    notes: "",
+    included: false,
+  },
+  {
+    id: "dance-floor",
+    label: "Open dance floor coverage",
+    time: "",
+    notes: "",
+    included: true,
+  },
+  {
+    id: "private-last-dance",
+    label: "Private last dance",
+    time: "",
+    notes: "",
+    included: false,
+  },
+  {
+    id: "exit",
+    label: "Exit / send-off photos",
+    time: "",
+    notes: "",
+    included: false,
+  },
+];
+
+export default function TimelinePage() {
+  const [items, setItems] = useState<TimelineItem[]>(defaultItems);
+  const [customItems, setCustomItems] = useState<TimelineItem[]>([]);
+
+  const handleChange = (
+    id: string,
+    source: "default" | "custom",
+    field: "time" | "notes" | "label" | "included",
+    value: string | boolean
+  ) => {
+    const updater = (list: TimelineItem[]) =>
+      list.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              [field]: value,
+            }
+          : item
+      );
+
+    if (source === "default") {
+      setItems((prev) => updater(prev));
+    } else {
+      setCustomItems((prev) => updater(prev));
+    }
+  };
+
+  const handleAddCustom = () => {
+    const newId = `custom-${Date.now()}`;
+    setCustomItems((prev) => [
+      ...prev,
+      {
+        id: newId,
+        label: "Additional moment",
+        time: "",
+        notes: "",
+        included: true,
+      },
+    ]);
+  };
+
+  const handleRemoveCustom = (id: string) => {
+    setCustomItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const includedDefaults = items.filter((i) => i.included);
+  const notIncludedDefaults = items.filter((i) => !i.included);
+
   return (
     <main
       style={{
@@ -7,297 +216,467 @@ export default function Home() {
         color: "#2E2E2E",
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+        padding: "3rem 1.25rem 4rem",
       }}
     >
-      {/* HERO */}
       <section
         style={{
-          padding: "6rem 1.5rem 4rem",
-          textAlign: "center",
-          maxWidth: "960px",
-          margin: "0 auto",
-        }}
-      >
-        {/* top pill bar */}
-        <div
-          style={{
-            display: "inline-block",
-            padding: "0.35rem 0.85rem",
-            borderRadius: "999px",
-            border: "1px solid #C9A66B",
-            fontSize: "0.75rem",
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            color: "#7A6A45",
-            marginBottom: "1.5rem",
-          }}
-        >
-          POSESUITE by GARBERO PHOTOGRAPHY
-        </div>
-
-        <h1
-          style={{
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontWeight: 300,
-            fontSize: "2.7rem",
-            lineHeight: 1.1,
-            marginBottom: "1.25rem",
-          }}
-        >
-          Plan, organize, and schedule your wedding so we can execute it
-          beautifully.
-        </h1>
-
-        <p
-          style={{
-            maxWidth: "34rem",
-            margin: "0 auto 2.5rem",
-            fontSize: "1.05rem",
-            color: "#555",
-          }}
-        >
-          PoseSuite connects your vision with my team&apos;s expertise to build
-          family formals, timelines, and inspiration boards — all in one elegant
-          workflow.
-        </p>
-
-                <a
-          href="/basics"
-          style={{
-            display: "inline-block",
-            backgroundColor: "#A3B18A",
-            color: "#1F2622",
-            border: "none",
-            padding: "0.9rem 2.8rem",
-            borderRadius: "999px",
-            fontSize: "1rem",
-            letterSpacing: "0.05em",
-            textTransform: "uppercase",
-            cursor: "pointer",
-            fontWeight: 500,
-            boxShadow: "0 10px 25px rgba(0,0,0,0.06)",
-            textDecoration: "none",
-          }}
-        >
-          Get Started
-        </a>
-
-
-        <p
-          style={{
-            marginTop: "0.75rem",
-            fontSize: "0.85rem",
-            color: "#777",
-          }}
-        >
-          Built for couples who value simplicity in planning timeless imagery.
-        </p>
-      </section>
-
-      {/* HOW IT WORKS / TAGLINE */}
-      <section
-        style={{
-          padding: "3rem 1.5rem 4rem",
           maxWidth: "1040px",
           margin: "0 auto",
+          backgroundColor: "#FFFFFF",
+          borderRadius: "1.5rem",
+          padding: "2.5rem 2rem 2.75rem",
+          boxShadow: "0 20px 45px rgba(0,0,0,0.06)",
+          border: "1px solid #E4E4E0",
         }}
       >
-        <h2
-          style={{
-            textAlign: "center",
-            fontSize: "1.6rem",
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontWeight: 400,
-            marginBottom: "2.5rem",
-          }}
-        >
-          An organized home for your wedding photography vision board.
-        </h2>
-
+        {/* Header */}
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "1.75rem",
-          }}
-        >
-          {[
-            {
-              title: "Plan",
-              text: "Collect must-have images, family details, and inspiration uploads in one place.",
-            },
-            {
-              title: "Organize",
-              text: "Build smart family shot lists, note special considerations, and photographer-only important notes.",
-            },
-            {
-              title: "Schedule",
-              text: "Design a photography-first timeline so your photo team knows where to be and who should be in front of our lens.",
-            },
-            {
-              title: "Execute",
-              text: "Shareable day-of checklists for my phone – I can tap to mark shots complete so I can focus on creating, not remembering.",
-            },
-          ].map((item) => (
-            <div
-              key={item.title}
-              style={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: "1.25rem",
-                padding: "1.75rem 1.6rem",
-                border: "1px solid #E4E4E0",
-                boxShadow: "0 14px 35px rgba(0,0,0,0.03)",
-              }}
-            >
-              <div
-                style={{
-                  width: "38px",
-                  height: "38px",
-                  borderRadius: "50%",
-                  background:
-                    "radial-gradient(circle at 30% 20%, #C9A66B, #A37A36)",
-                  marginBottom: "0.9rem",
-                }}
-              />
-              <h3
-                style={{
-                  fontSize: "1.1rem",
-                  marginBottom: "0.45rem",
-                  fontWeight: 600,
-                }}
-              >
-                {item.title}
-              </h3>
-              <p style={{ fontSize: "0.95rem", color: "#555" }}>
-                {item.text}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FEATURE HIGHLIGHTS */}
-      <section
-        style={{
-          padding: "3.5rem 1.5rem 4rem",
-          backgroundColor: "#F2F3ED",
-          borderTop: "1px solid #E0E2D7",
-          borderBottom: "1px solid #E0E2D7",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1040px",
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 1fr)",
-            gap: "2.5rem",
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "1rem",
+            alignItems: "flex-start",
+            marginBottom: "2rem",
+            flexWrap: "wrap",
           }}
         >
           <div>
-            <h2
+            <div
+              style={{
+                display: "inline-block",
+                padding: "0.35rem 0.85rem",
+                borderRadius: "999px",
+                border: "1px solid #C9A66B",
+                fontSize: "0.75rem",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "#7A6A45",
+                marginBottom: "1.25rem",
+              }}
+            >
+              PoseSuite · Wedding day timeline
+            </div>
+            <h1
               style={{
                 fontFamily: "Georgia, 'Times New Roman', serif",
-                fontSize: "1.6rem",
-                fontWeight: 400,
-                marginBottom: "1rem",
-              }}
-            >
-              Built so your wedding day feels calm, intentional, and fully seen.
-              I want you to enjoy your day without it feeling like a photo
-              shoot.
-            </h2>
-            <p
-              style={{
-                fontSize: "0.98rem",
-                color: "#555",
-                marginBottom: "1.5rem",
-              }}
-            >
-              PoseSuite is your private planning room for Garbero Photography: a
-              dedicated hub for your family formals, timeline, special
-              considerations, and inspiration images we&apos;ll bring to life on
-              the day.
-            </p>
-            <ul
-              style={{
-                listStyle: "none",
-                padding: 0,
-                margin: 0,
-                fontSize: "0.95rem",
-                color: "#444",
-              }}
-            >
-              <li style={{ marginBottom: "0.65rem" }}>
-                ✅ Guided family shot builder with space for names and dynamics
-              </li>
-              <li style={{ marginBottom: "0.65rem" }}>
-                ✅ Timeline notes so we know where to be, and when
-              </li>
-              <li style={{ marginBottom: "0.65rem" }}>
-                ✅ Upload your must-have inspiration images and traditions
-              </li>
-              <li>
-                ✅ Day-of reference so we can focus on you, not the checklist
-              </li>
-            </ul>
-          </div>
-
-          <div
-            style={{
-              alignSelf: "center",
-              borderRadius: "1.5rem",
-              border: "1px solid #E0E2D7",
-              padding: "1.75rem 1.5rem",
-              backgroundColor: "#FFFFFF",
-              boxShadow: "0 18px 40px rgba(0,0,0,0.05)",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "1.05rem",
-                fontWeight: 600,
+                fontWeight: 300,
+                fontSize: "2rem",
                 marginBottom: "0.75rem",
               }}
             >
-              Working with Garbero Photography
-            </h3>
+              Build your wedding day timeline.
+            </h1>
             <p
               style={{
-                fontSize: "0.95rem",
+                maxWidth: "540px",
+                fontSize: "0.98rem",
                 color: "#555",
-                marginBottom: "1.2rem",
+                margin: 0,
               }}
             >
-              From your first consultation to your final gallery delivery, my
-              team and I use PoseSuite behind the scenes to keep everything
-              organized, thoughtful, and tailored to your story.
-            </p>
-            <p
-              style={{
-                fontSize: "0.9rem",
-                color: "#777",
-                fontStyle: "italic",
-              }}
-            >
-              You bring the love and the vision. We&apos;ll bring the calm, the
-              direction, and the artistry to photograph it all.
+              We&apos;ll start with the most common moments we see at weddings.
+              Keep what fits your day, add times if you know them, and use the
+              notes to share anything you want me to be aware of.
             </p>
           </div>
+          <a
+            href="/day-of"
+            style={{
+              fontSize: "0.85rem",
+              textDecoration: "none",
+              color: "#555",
+              padding: "0.4rem 0.9rem",
+              borderRadius: "999px",
+              border: "1px solid #D4D4CF",
+              backgroundColor: "#FFFDF8",
+              marginTop: "0.5rem",
+            }}
+          >
+            Preview day-of view →
+          </a>
+        </div>
+
+        {/* Core moments */}
+        <section style={{ marginBottom: "2rem" }}>
+          <h2
+            style={{
+              fontSize: "1.05rem",
+              fontWeight: 600,
+              marginBottom: "0.75rem",
+            }}
+          >
+            Core moments
+          </h2>
+          <p
+            style={{
+              fontSize: "0.9rem",
+              color: "#666",
+              marginBottom: "1rem",
+            }}
+          >
+            Check the moments that are part of your day, and add an approximate
+            time if you have one. It&apos;s okay if you don&apos;t know
+            everything yet.
+          </p>
+
+          <div style={{ display: "grid", gap: "0.9rem" }}>
+            {includedDefaults.map((item) => (
+              <div
+                key={item.id}
+                style={{
+                  borderRadius: "1rem",
+                  border: "1px solid #E2E2DD",
+                  padding: "0.75rem 0.9rem 0.9rem",
+                  backgroundColor: "#FCFCF9",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "0.75rem",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <label
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      fontSize: "0.95rem",
+                      fontWeight: 600,
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={item.included}
+                      onChange={(e) =>
+                        handleChange(
+                          item.id,
+                          "default",
+                          "included",
+                          e.target.checked
+                        )
+                      }
+                    />
+                    <span>{item.label}</span>
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.4rem",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    <span style={{ color: "#777" }}>Approx. time</span>
+                    <input
+                      type="time"
+                      value={item.time}
+                      onChange={(e) =>
+                        handleChange(
+                          item.id,
+                          "default",
+                          "time",
+                          e.target.value
+                        )
+                      }
+                      style={{
+                        borderRadius: "999px",
+                        border: "1px solid #D4D4CF",
+                        padding: "0.3rem 0.6rem",
+                        fontSize: "0.85rem",
+                        backgroundColor: "#FFFFFF",
+                      }}
+                    />
+                  </div>
+                </div>
+                <textarea
+                  placeholder="Notes about this moment (who's involved, location, anything special you want me to know)."
+                  value={item.notes}
+                  onChange={(e) =>
+                    handleChange(
+                      item.id,
+                      "default",
+                      "notes",
+                      e.target.value
+                    )
+                  }
+                  rows={item.notes ? 2 : 1}
+                  style={{
+                    width: "100%",
+                    marginTop: "0.45rem",
+                    borderRadius: "0.8rem",
+                    border: "1px solid #E2E2DD",
+                    padding: "0.45rem 0.65rem",
+                    fontSize: "0.88rem",
+                    resize: "vertical",
+                    outline: "none",
+                    backgroundColor: "#FFFFFF",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+
+          {notIncludedDefaults.length > 0 && (
+            <details
+              style={{
+                marginTop: "1rem",
+                fontSize: "0.85rem",
+                color: "#666",
+              }}
+            >
+              <summary style={{ cursor: "pointer" }}>
+                Moments you&apos;ve turned off ({notIncludedDefaults.length})
+              </summary>
+              <div
+                style={{
+                  marginTop: "0.6rem",
+                  display: "grid",
+                  gap: "0.5rem",
+                }}
+              >
+                {notIncludedDefaults.map((item) => (
+                  <label
+                    key={item.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={item.included}
+                      onChange={(e) =>
+                        handleChange(
+                          item.id,
+                          "default",
+                          "included",
+                          e.target.checked
+                        )
+                      }
+                    />
+                    <span>{item.label}</span>
+                  </label>
+                ))}
+              </div>
+            </details>
+          )}
+        </section>
+
+        {/* Additional moments */}
+        <section>
+          <h2
+            style={{
+              fontSize: "1.05rem",
+              fontWeight: 600,
+              marginBottom: "0.75rem",
+            }}
+          >
+            Additional moments
+          </h2>
+          <p
+            style={{
+              fontSize: "0.9rem",
+              color: "#666",
+              marginBottom: "1rem",
+            }}
+          >
+            Use this space for anything unique to your day – special
+            performances, cultural traditions, outfit changes, private vows, or
+            anything else we should plan for.
+          </p>
+
+          <div style={{ display: "grid", gap: "0.9rem", marginBottom: "1rem" }}>
+            {customItems.map((item) => (
+              <div
+                key={item.id}
+                style={{
+                  borderRadius: "1rem",
+                  border: "1px solid #E2E2DD",
+                  padding: "0.75rem 0.9rem 0.9rem",
+                  backgroundColor: "#FCFCF9",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "0.75rem",
+                    flexWrap: "wrap",
+                    marginBottom: "0.4rem",
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={item.label}
+                    onChange={(e) =>
+                      handleChange(
+                        item.id,
+                        "custom",
+                        "label",
+                        e.target.value
+                      )
+                    }
+                    placeholder="Describe this moment"
+                    style={{
+                      border: "none",
+                      background: "transparent",
+                      fontSize: "0.95rem",
+                      fontWeight: 600,
+                      outline: "none",
+                      minWidth: "220px",
+                    }}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.4rem",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    <span style={{ color: "#777" }}>Approx. time</span>
+                    <input
+                      type="time"
+                      value={item.time}
+                      onChange={(e) =>
+                        handleChange(
+                          item.id,
+                          "custom",
+                          "time",
+                          e.target.value
+                        )
+                      }
+                      style={{
+                        borderRadius: "999px",
+                        border: "1px solid #D4D4CF",
+                        padding: "0.3rem 0.6rem",
+                        fontSize: "0.85rem",
+                        backgroundColor: "#FFFFFF",
+                      }}
+                    />
+                  </div>
+                </div>
+                <textarea
+                  placeholder="Notes about this moment."
+                  value={item.notes}
+                  onChange={(e) =>
+                    handleChange(
+                      item.id,
+                      "custom",
+                      "notes",
+                      e.target.value
+                    )
+                  }
+                  rows={item.notes ? 2 : 1}
+                  style={{
+                    width: "100%",
+                    borderRadius: "0.8rem",
+                    border: "1px solid #E2E2DD",
+                    padding: "0.45rem 0.65rem",
+                    fontSize: "0.88rem",
+                    resize: "vertical",
+                    outline: "none",
+                    backgroundColor: "#FFFFFF",
+                    marginBottom: "0.4rem",
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveCustom(item.id)}
+                  style={{
+                    border: "none",
+                    background: "transparent",
+                    color: "#999",
+                    fontSize: "0.8rem",
+                    cursor: "pointer",
+                    padding: 0,
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={handleAddCustom}
+            style={{
+              borderRadius: "999px",
+              border: "1px solid #C9A66B",
+              backgroundColor: "#FFFDF8",
+              padding: "0.7rem 1.6rem",
+              fontSize: "0.9rem",
+              cursor: "pointer",
+            }}
+          >
+            + Add another moment
+          </button>
+        </section>
+
+        {/* Bottom controls */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            marginTop: "2rem",
+            gap: "0.75rem",
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            type="button"
+            style={{
+              borderRadius: "999px",
+              border: "1px solid #D4D4CF",
+              backgroundColor: "#FFFFFF",
+              padding: "0.7rem 1.8rem",
+              fontSize: "0.9rem",
+              cursor: "pointer",
+            }}
+          >
+            Save for later (coming soon)
+          </button>
+          <button
+            type="button"
+            style={{
+              borderRadius: "999px",
+              border: "none",
+              backgroundColor: "#A3B18A",
+              color: "#1F2622",
+              padding: "0.85rem 2.4rem",
+              fontSize: "0.95rem",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              cursor: "pointer",
+              fontWeight: 500,
+            }}
+          >
+            This looks good (for now)
+          </button>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer
+      <p
         style={{
-          textAlign: "center",
-          padding: "1.5rem 1rem 2rem",
           fontSize: "0.8rem",
-          color: "#777",
+          color: "#888",
+          textAlign: "center",
+          marginTop: "1rem",
         }}
       >
-        © {new Date().getFullYear()} Garbero Photography · PoseSuite
-      </footer>
+        Later, each moment here will connect to its own shot list inside your
+        PoseSuite day-of plan.
+      </p>
     </main>
   );
 }
