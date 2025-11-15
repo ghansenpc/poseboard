@@ -19,7 +19,7 @@ const events: EventBlock[] = [
     title: "Getting Ready (Ellie)",
     location: "The Westin Chicago River North, 320 N Dearborn St, Chicago IL",
     notes:
-      "JIM: P2 - 773-557-2239"," ELLIE: 217-840-8979", "ALEXA: 480-516-2575 - Suite prep photos: flat-lay details, Ellie individual getting ready, bridesmaids group, first look with bridesmaids and father of the bride.",
+      "JIM: P2 - 773-557-2239, ELLIE: 217-840-8979, ALEXA: 480-516-2575 - Suite prep photos: flat-lay details, Ellie individual getting ready, bridesmaids group, first look with bridesmaids and father of the bride.",
     shots: [
       { id: "flatlay", label: "Flat-lay details" },
       { id: "dress-main", label: "Ceremony dress photos" },
